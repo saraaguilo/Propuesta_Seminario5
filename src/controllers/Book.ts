@@ -3,13 +3,14 @@ import mongoose from 'mongoose';
 import Book from '../models/Book';
 
 const createBook = (req: Request, res: Response, next: NextFunction) => {
-    const { author, title, category } = req.body;
+    const { author, title, category, price } = req.body;
 
     const book = new Book({
         _id: new mongoose.Types.ObjectId(),
         author,
         title,
-        category
+        category,
+        price
     });
 
     return book
@@ -73,4 +74,38 @@ const deleteBook = (req: Request, res: Response, next: NextFunction) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
-export default { createBook, readBook, readAll, readAllA, updateBook, deleteBook };
+const getAuthorByTitle = (req: Request, res: Response, next: NextFunction) => {
+    const title = req.params.title;
+
+    return Book.findOne({ title })
+        .then((book) => {
+            if (book) {
+                res.status(200).json({ author: book.author });
+            } else {
+                res.status(404).json({ message: 'Book not found' });
+            }
+        })
+        .catch((error) => res.status(500).json({ error }));
+};
+
+const addPriceToBook = (req: Request, res: Response, next: NextFunction) => {
+    const bookId = req.params.bookId; // Obtener el ID del libro desde los parámetros de la solicitud
+    const price = req.body.price; // Obtener el precio desde el cuerpo de la solicitud
+
+    // Encuentra el libro por su ID y actualiza el atributo "precio"
+    Book.findById(bookId)
+        .then((book) => {
+            if (book) {
+                book.price = price; // Asigna el precio al libro
+                return book
+                    .save()
+                    .then((updatedBook) => res.status(200).json({ book: updatedBook }))
+                    .catch((error) => res.status(500).json({ error }));
+            } else {
+                return res.status(404).json({ message: 'Libro no encontrado' });
+            }
+        })
+        .catch((error) => res.status(500).json({ error }));
+};
+
+export default { createBook, readBook, readAll, readAllA, updateBook, deleteBook, getAuthorByTitle, addPriceToBook };

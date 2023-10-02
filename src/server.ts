@@ -5,6 +5,7 @@ import { config } from './config/config';
 import Logging from './library/Logging';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
+import storeRoutes from './routes/Store';
 import cors from 'cors';
 
 const router = express();
@@ -58,6 +59,7 @@ const StartServer = () => {
     /** Routes */
     router.use('/authors', authorRoutes);
     router.use('/books', bookRoutes);
+    router.use('/stores', storeRoutes);
 
     /** Healthcheck */
     router.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong' }));

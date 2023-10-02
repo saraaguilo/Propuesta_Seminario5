@@ -3,6 +3,7 @@ import { NextFunction, Response, Request } from 'express';
 import Logging from '../library/Logging';
 import { IAuthor } from '../models/Author';
 import { IBook } from '../models/Book';
+import { IStore } from '../models/Store';
 
 export const ValidateSchema = (schema: ObjectSchema) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -39,7 +40,21 @@ export const Schemas = {
                 .regex(/^[0-9a-fA-F]{24}/)
                 .required(),
             title: Joi.string().required(),
-            category: Joi.string().required()
+            category: Joi.string().required(),
+            price: Joi.number().required()
+        })
+    },
+    store: {
+        // Nuevo esquema para Store
+        create: Joi.object<IStore>({
+            name: Joi.string().required(),
+            owner: Joi.string().required(),
+            products: Joi.string().required()
+        }),
+        update: Joi.object<IStore>({
+            name: Joi.string().required(),
+            owner: Joi.string().required(),
+            products: Joi.string().required()
         })
     }
 };
